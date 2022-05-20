@@ -1,0 +1,10 @@
+1. Zdefiniowanie zmiennych określających priotytet bazowy i bieżący w strukturze proc.
+2. Zdefiniowanie zmiennych MAX_AGE I MIN_PRI, które w zależności od priorytetu bazowego procesu dzielą procesy na 3 kategorie.
+3. W zależności od tej kategorii procesy użytkowe będą szeregowane na 3 sposoby:
+- priorytet bazowy > MAX_AGE - reżim pobłażania (proces realizuje się, póki sam nie zwolni procesora)
+- MIN_PRI < priorytet bazowy <= MAX_AGE - reżim starzenia (stopniowe zwiększanie priorytetu procesów czekających w kolejce)
+- priorytet bazowy < MIN_PRI - reżim priorytetów statycznych z podziałem czasu (proces wstawiany jest na koniec kolejki za procesami o tym samym priorytecie bieżącym)
+Są to założenia przedstawione w algorytmie przykładowym instrukcji. 
+Jednocześnie zachowana jest domyślna hierarchia procesów w systemie UNIX. Tzn. że procesy systemowe mają bezwzględny priorytet na procesami serwerowymi, a serwerowe nad użytkowymi. Użytkowych natomiast będą dotyczyły powyższe kryteria. Trzeba je uwzględnić przy aktualizacji funkcji sched (odpowiedzialnej za zarządzenie, który proces będzie teraz wykonywany) oraz ready (dodającej proces do odpowiedniej kolejki procesów gotowych). W funkcji sched należy zarządzać procesami użytkowymi według wymienionych kryteriów, natomiast w funkcji ready zadbać o to, by pierwszy w kolejce był proces o najwyższym priorytecie bieżącym.
+4. Stworzenie funkcji obsługującej wywołanie systemowe, umożliwiające ustawienie procesowi priorytetu (niezbędne do testowania).
+5. Testowanie - uruchomienie w tle 3 procesów (minimum), każdy z innym priorytetem, ustawionym poprzez dodanego syscalla. Mierzenie czasu wykonania każdego procesu w celu sprawdzenia, czy proces o najwyższym priorytecie wykonał się jako pierwszy.
